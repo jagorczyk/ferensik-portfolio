@@ -1,7 +1,6 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { ContactShadows, Environment, OrbitControls } from '@react-three/drei'
 import { Suspense, useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import * as THREE from 'three'
 import DffModel from './DffModel'
 
@@ -58,41 +57,6 @@ function StaticSkinsScene() {
   </div>
 }
 
-function StaticCarScene() {
-  const [carReady, setCarReady] = useState(false)
-  return <div className="car-stage" aria-label="Statyczny model Porsche">
-    <Canvas camera={{ position: [0, 5.8, 0.9], up: [0, 0, 1], fov: 34 }} dpr={[1, 1.7]} gl={{ antialias: true }}>
-      <color attach="background" args={['#080808']} />
-      <ambientLight intensity={0.48} />
-      <directionalLight position={[3, 4, 4]} intensity={1.35} color="#fff" />
-      <directionalLight position={[-4, 1, 2]} intensity={0.35} color="#666" />
-      <Suspense fallback={null}>
-        <AnimatedCarGroup active={carReady}>
-          <DffModel modelName="porsche" basePath="/cars" renderMode="vehicle" vehicleColor="#94141b" onLoaded={() => setCarReady(true)} fallback={<FallbackObject />} />
-        </AnimatedCarGroup>
-        <Environment preset="studio" />
-        <ContactShadows position={[0, 0, -0.95]} opacity={0.72} scale={4.8} blur={2.4} />
-        <mesh position={[0, 0, -0.95]} receiveShadow>
-          <planeGeometry args={[10, 10]} />
-          <shadowMaterial transparent opacity={0.24} />
-        </mesh>
-      </Suspense>
-    </Canvas>
-  </div>
-}
-
-function AnimatedCarGroup({ children, active }: { children: ReactNode; active: boolean }) {
-  const group = useRef<THREE.Group>(null)
-  const progress = useRef(0)
-  useFrame((_, delta) => {
-    if (!group.current || !active || progress.current >= 1) return
-    progress.current = Math.min(1, progress.current + delta / 1.6)
-    const eased = 1 - Math.pow(1 - progress.current, 3)
-    group.current.rotation.z = Math.PI / 6 - Math.PI * 2 * (1 - eased)
-  })
-  return <group ref={group} rotation={[0, 0, Math.PI / 6 - Math.PI * 2]} scale={1.25}>{children}</group>
-}
-
 function InstagramIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg> }
 function GithubIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-3 18.51c.48.09.66-.2.66-.46v-1.67c-2.7.59-3.27-1.15-3.27-1.15-.44-1.12-1.08-1.42-1.08-1.42-.88-.6.07-.59.07-.59.97.07 1.48.99 1.48.99.86 1.47 2.26 1.05 2.81.8.09-.63.34-1.05.61-1.29-2.15-.24-4.41-1.08-4.41-4.8 0-1.06.38-1.92 1-2.6-.1-.24-.43-1.23.1-2.56 0 0 .82-.26 2.67.99a9.3 9.3 0 0 1 4.86 0c1.85-1.25 2.67-.99 2.67-.99.53 1.33.2 2.32.1 2.56.62.68 1 1.54 1 2.6 0 3.73-2.27 4.56-4.43 4.8.35.3.66.87.66 1.75v2.59c0 .26.18.55.67.46A9.5 9.5 0 0 0 12 2.5Z" /></svg> }
 function CartIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L20 8H6" /><circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></svg> }
@@ -109,7 +73,7 @@ export default function App() {
   }
   return <main>
     <nav className="nav"><a className="brand" href="#top">FERENSIK</a><div className="nav-links"><a href="#models">Modele</a><a href="#about">O mnie</a><a href="#contact">Kontakt</a></div></nav>
-    <header className="intro" id="top"><div className="intro-copy-block"><h1>Modele<br /><span>3D.</span></h1><p className="intro-copy">Obiekty tworzone do świata MTA.</p></div><StaticCarScene /></header>
+    <header className="intro" id="top"><div className="intro-copy-block"><h1>Modele<br /><span>3D.</span></h1><p className="intro-copy">Obiekty tworzone do świata MTA.</p></div></header>
     <section className="models" id="models"><div className="section-heading"><h2>Modele</h2><span>{MODELS.length} obiekty</span></div>{MODELS.map((model) => <article className="model-section" key={model.id}><div className="model-meta"><span>{model.number}</span><h2>{model.label}</h2><p className="model-price">{model.price}</p><button className="buy-button" type="button" onClick={() => chooseModel(model)}><CartIcon /><span>Dodaj do koszyka</span></button></div><div className="model-canvas"><ModelCanvas modelName={model.id} /></div></article>)}</section>
     <section className="about" id="about"><div className="about-copy"><h2>O mnie</h2><p>Modeluję obiekty 3D do MTA od 2020 roku. Zajmuję się całym procesem — od bryły i tekstur po przygotowanie modelu do użycia w grze.</p></div><StaticSkinsScene /></section>
     <section className="contact" id="contact"><div><h2>Kontakt</h2><div className="socials"><a href="https://instagram.com/ferensik" target="_blank" rel="noreferrer"><InstagramIcon /> Instagram <span>↗</span></a><a href="https://github.com/ferensik" target="_blank" rel="noreferrer"><GithubIcon /> GitHub <span>↗</span></a></div></div><form onSubmit={(event) => { event.preventDefault(); setSent(true) }}><div className={`selected-model${selectedModel ? ' has-selection' : ''}`} aria-live="polite">{selectedModel ? <>Wybrany model: <strong>{selectedModel.label}</strong><span>{selectedModel.price}</span></> : 'Wybierz model powyżej albo napisz bezpośrednio.'}</div><label>Imię<input required name="name" placeholder="Twoje imię" /></label><label>E-mail<input required type="email" name="email" placeholder="twoj@email.com" /></label><label>Temat<input required name="subject" value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Temat wiadomości" /></label><label>Wiadomość<textarea required name="message" rows={5} placeholder="Treść wiadomości" /></label><button type="submit">{sent ? 'Wysłano ✓' : 'Wyślij wiadomość ↗'}</button></form></section>
