@@ -1,6 +1,15 @@
-# Ferensik — portfolio 3D
+# Ferensik — portfolio modeli 3D
 
-Frontend portfolio w React, Vite, TypeScript i React Three Fiber. Źródłowy model znajduje się w `public/models/sara.dff`.
+Interaktywne portfolio modeli 3D zbudowane w React, TypeScript, Vite i React Three Fiber.
+
+## Funkcje
+
+- interaktywne sceny 3D z obsługą obrotu i przybliżenia,
+- ładowanie modeli RenderWare DFF oraz tekstur TXD w przeglądarce,
+- statyczna prezentacja skinów z katalogu `public/skins`,
+- formularz kontaktowy i przyciski dodawania modeli do zapytania,
+- responsywny układ desktop/mobile,
+- materiały zastępcze dla modeli bez pełnego zestawu tekstur.
 
 ## Uruchomienie
 
@@ -9,12 +18,23 @@ npm install
 npm run dev
 ```
 
-## Model DFF
+## Struktura zasobów
 
-Aplikacja parsuje `public/models/sara.dff` bezpośrednio w przeglądarce przez `rw-parser-ng`, a następnie buduje z geometrii `THREE.BufferGeometry`. Brakujące tekstury TXD są celowo zastępowane monochromatycznymi materiałami. Fallback geometryczny pojawia się tylko podczas ładowania lub przy błędzie parsera.
+Modele prezentowane na stronie znajdują się w katalogu `public/models`. Skiny są przechowywane w `public/skins`. Każdy model może mieć odpowiadające mu pliki `.dff` i `.txd` o tej samej nazwie.
 
-## Build
+## Build produkcyjny
 
 ```bash
 npm run build
+npm run preview
 ```
+
+## Technologie
+
+- React 18
+- TypeScript
+- Vite
+- Three.js
+- React Three Fiber
+- Drei
+- `rw-parser-ng`
