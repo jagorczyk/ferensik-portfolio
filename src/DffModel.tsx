@@ -52,11 +52,11 @@ export default function DffModel({ fallback, modelName, basePath = '/models', ma
         const loaded = new Map<string, THREE.Texture>()
         const parsed = new DffParser(Buffer.from(await dffResponse.arrayBuffer())).parse()
         if (txdResponse?.ok) {
-          const txd = new TxdParser(Buffer.from(await txdResponse.arrayBuffer())).parse()
+          const txdParser = new TxdParser(Buffer.from(await txdResponse.arrayBuffer()))`n          const txd = txdParser.parse()
           txd.textureDictionary.textureNatives.forEach((native) => {
           const source = native.mipmaps[0]
           if (!source?.length) return
-          const texture = new THREE.DataTexture(new Uint8Array(source), native.width, native.height, THREE.RGBAFormat)
+          const bitmap = txdParser.getBitmapWithRasterFormat(native.rasterFormat, new Uint8Array(source), native.width, native.height)`n          if (!bitmap.length) return`n          const texture = new THREE.DataTexture(bitmap, native.width, native.height, THREE.RGBAFormat)
           texture.colorSpace = THREE.SRGBColorSpace
           texture.flipY = false
           texture.minFilter = THREE.LinearFilter
