@@ -57,7 +57,7 @@ export default function DffModel({ fallback, modelName, basePath = '/models', ma
           txd.textureDictionary.textureNatives.forEach((native) => {
           const source = native.mipmaps[0]
           if (!source?.length) return
-          const bitmap = txdParser.getBitmapWithRasterFormat(native.rasterFormat, new Uint8Array(source), native.width, native.height)
+          const bitmap = (txdParser as any).getBitmapWithRasterFormat(native.rasterFormat, new Uint8Array(source), native.width, native.height)
           if (!bitmap.length) return
           const texture = new THREE.DataTexture(bitmap, native.width, native.height, THREE.RGBAFormat)
           texture.colorSpace = THREE.SRGBColorSpace
