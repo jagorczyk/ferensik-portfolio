@@ -35,13 +35,10 @@ function ModelCanvas({ modelName, interactive = true }: { modelName: string; int
 }
 
 function InteractiveSkinsScene() {
-  const group = useRef<THREE.Group>(null)
+  const group = null
   const controls = useRef<any>(null)
   const [paused, setPaused] = useState(false)
-  const [resetSignal, setResetSignal] = useState(0)
-  useFrame((_, delta) => { if (group.current && !paused) group.current.rotation.z += delta * 0.28 })
-  useEffect(() => { if (group.current && resetSignal > 0) group.current.rotation.z = 0 }, [resetSignal])
-  const resetView = () => { controls.current?.reset(); setResetSignal((value) => value + 1) }
+  const resetView = () => { controls.current?.reset() }
   return <div className={`skins-stage${paused ? ' is-active' : ''}`} aria-label="Interaktywny podgląd skinów"><Canvas camera={{ position: [0, 6.8, 1.1], up: [0, 0, 1], fov: 32 }} dpr={[1, 1.7]} gl={{ antialias: true }}><color attach="background" args={['#080808']} /><ambientLight intensity={0.42} /><directionalLight position={[3, 4, 5]} intensity={1.15} color="#fff" /><directionalLight position={[-4, 1, 2]} intensity={0.35} color="#666" /><Suspense fallback={null}><group ref={group}><group position={[-0.82, 0, 0]} rotation={[0, -Math.PI / 2, 0]} scale={1.05}><DffModel modelName="agent" basePath="/skins" materialColor="#b8b8b2" fallback={<FallbackObject />} /></group><group position={[0.82, -0.38, 0]} rotation={[0, -Math.PI / 2, 0]} scale={1.05}><DffModel modelName="randomGang" basePath="/skins" materialColor="#b8b8b2" fallback={<FallbackObject />} /></group><Environment preset="studio" /><ContactShadows position={[0, 0, -1.25]} opacity={0.82} scale={4.4} blur={2.2} /></group></Suspense><OrbitControls ref={controls} target={[0, 0, 0]} enablePan={false} minDistance={3.2} maxDistance={10} autoRotate={false} makeDefault onStart={() => setPaused(true)} onEnd={() => setPaused(false)} /></Canvas><div className="viewer-overlay"><span>{paused ? 'Sterowanie aktywne' : 'Przeciągnij, aby obrócić · scroll, aby przybliżyć'}</span><button type="button" onClick={resetView}>Reset widoku</button></div></div>
 }
 
