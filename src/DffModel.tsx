@@ -9,6 +9,21 @@ type DffData = ReturnType<DffParser['parse']>
 type RenderGeometry = { geometry: THREE.BufferGeometry; textureName?: string; materialColor?: string; opacity?: number; sourceGeometryIndex: number }
 const textureKey = (value: string) => value.trim().toLowerCase().replace(/\.(png|jpg|jpeg|bmp|dds)$/i, '')
 
+function decodeTxdBitmap(raster: Uint8Array, rasterFormat: number, width: number, height: number) {
+  const rgba = new Uint8Array(width * height * 4)
+  if (rasterFormat === 1280 || rasterFormat === 1536) {
+    for (let index = 0; index < width * height; index += 1) {
+      const source = index * 4
+      const target = source
+      rgba[target] = raster[source + 2]
+      rgba[target + 1] = raster[source + 1]
+      rgba[target + 2] = raster[source]
+      rgba[target + 3] = rasterFormat === 1280 ? raster[source + 3] : 255
+    }
+    return rgba
+  }
+  return raster
+}
 function geometryFromDff(geometry: NonNullable<DffData['geometryList']>['geometries'][number], sourceGeometryIndex: number): RenderGeometry[] {
   const result: RenderGeometry[] = []
   const positions = geometry.vertexInformation.flatMap(({ x, y, z }) => [x, y, z])
@@ -57,7 +72,7 @@ export default function DffModel({ fallback, modelName, basePath = '/models', ma
           txd.textureDictionary.textureNatives.forEach((native) => {
           const source = native.mipmaps[0]
           if (!source?.length) return
-          const bitmap = (txdParser as any).getBitmapWithRasterFormat(native.rasterFormat, new Uint8Array(source), native.width, native.height)
+          const bitmap = decodeTxdBitmap(new Uint8Array(source), native.rasterFormat, native.width, native.height)
           if (!bitmap.length) return
           const texture = new THREE.DataTexture(bitmap, native.width, native.height, THREE.RGBAFormat)
           texture.colorSpace = THREE.SRGBColorSpace
