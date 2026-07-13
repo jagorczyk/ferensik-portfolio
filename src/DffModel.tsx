@@ -74,7 +74,7 @@ export default function DffModel({ fallback, modelName, basePath = '/models', ma
           if (!source?.length) return
           const bitmap = decodeTxdBitmap(new Uint8Array(source), native.rasterFormat, native.width, native.height)
           if (!bitmap.length) return
-          const texture = new THREE.DataTexture(bitmap, native.width, native.height, THREE.RGBAFormat)
+          const texture = new THREE.DataTexture(new Uint8Array(bitmap), native.width, native.height, THREE.RGBAFormat)
           texture.colorSpace = THREE.SRGBColorSpace
           texture.flipY = false
           texture.minFilter = THREE.LinearFilter
