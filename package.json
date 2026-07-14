@@ -12,8 +12,10 @@
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.17.10",
     "buffer": "^6.0.3",
+    "framer-motion": "^12.42.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.1",
     "rw-parser-ng": "^2.3.0",
     "three": "^0.170.0"
   },

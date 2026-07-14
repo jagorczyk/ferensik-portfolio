@@ -1,24 +1,24 @@
-import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, Environment, OrbitControls } from '@react-three/drei'
-import { Suspense, useEffect, useRef, useState } from 'react'
-import * as THREE from 'three'
-import DffModel from './DffModel'
+import { AnimatePresence } from 'framer-motion'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { ContactProvider } from './context/ContactContext'
+import Home from './pages/Home'
+import ModelsPage from './pages/ModelsPage'
+import SkinsPage from './pages/SkinsPage'
 
-const MODELS = [
-  { id: 'sara', label: 'Sara', number: '01', price: '149 zł' },
-  { id: 'domek', label: 'Domek', number: '02', price: '249 zł' },
-  { id: 'sv', label: 'SV', number: '03', price: '199 zł' },
-]
-
-function FallbackObject() { return <group><mesh rotation={[0.2, 0, 0]}><icosahedronGeometry args={[1.45, 2]} /><meshStandardMaterial color="#e9e9e9" roughness={0.28} metalness={0.3} wireframe /></mesh><mesh position={[0, 0.15, 0]} scale={[0.78, 1.4, 0.78]}><sphereGeometry args={[1, 32, 20]} /><meshStandardMaterial color="#222" roughness={0.22} metalness={0.5} /></mesh></group> }
-
-function RotatingModel({ modelName, paused, resetSignal }: { modelName: string; paused: boolean; resetSignal: number }) {
-  const group = useRef<THREE.Group>(null)
-  useFrame((_, delta) => { if (group.current && !paused) group.current.rotation.z += delta * 0.34 })
-  useEffect(() => { if (group.current && resetSignal > 0) group.current.rotation.z = Math.PI / 2 }, [resetSignal])
-  return <group ref={group} rotation={[0, 0, Math.PI / 2]} scale={1.2}><DffModel modelName={modelName} fallback={<FallbackObject />} /></group>
+function AnimatedRoutes() {
+  const location = useLocation()
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Home />} />
+        <Route path="/modele" element={<ModelsPage />} />
+        <Route path="/skiny" element={<SkinsPage />} />
+      </Routes>
+    </AnimatePresence>
+  )
 }
 
+<<<<<<< HEAD
 function ModelCanvas({ modelName, interactive = true }: { modelName: string; interactive?: boolean }) {
   const controls = useRef<any>(null)
   const [paused, setPaused] = useState(!interactive)
@@ -72,4 +72,14 @@ export default function App() {
     {modalModel && <div className="model-modal" role="presentation" onClick={() => setModalModel(null)}><div className="model-modal-panel" role="dialog" aria-modal="true" aria-labelledby="model-modal-title" onClick={(event) => event.stopPropagation()}><div className="model-modal-header"><div><span>{modalModel.number}</span><h2 id="model-modal-title">{modalModel.label}</h2></div><button className="modal-close" type="button" aria-label="Zamknij podgląd" onClick={() => setModalModel(null)}>×</button></div><div className="model-modal-canvas"><ModelCanvas modelName={modalModel.id} /></div><div className="model-modal-footer"><span>{modalModel.price}</span><span>Przeciągnij, aby obracać · scroll, aby przybliżyć</span></div></div></div>}
     <footer><span>© 2026 FERENSIK</span></footer>
   </main>
+=======
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ContactProvider>
+        <AnimatedRoutes />
+      </ContactProvider>
+    </BrowserRouter>
+  )
+>>>>>>> origin/brbn-branch
 }
