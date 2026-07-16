@@ -4,6 +4,9 @@ import ModelRow from './ModelRow'
 import { LongArrowIcon } from './icons'
 
 export default function ModelsSection() {
+  const featuredIds = new Set(['domek', 'gurzad', 'lscarstore'])
+  const featuredModels = MODELS.filter((model) => featuredIds.has(model.id))
+
   return (
     <section className="models" id="modele">
       <div className="section-heading">
@@ -13,7 +16,7 @@ export default function ModelsSection() {
         <span className="section-count">{MODELS.length} obiekty</span>
       </div>
       <div className="model-rows">
-        {MODELS.map((model) => (
+        {featuredModels.map((model) => (
           <ModelRow key={model.id} model={model} />
         ))}
       </div>

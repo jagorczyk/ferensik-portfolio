@@ -9,15 +9,18 @@ type DffData = ReturnType<DffParser['parse']>
 type RenderGeometry = { geometry: THREE.BufferGeometry; textureName?: string; materialColor?: string; opacity?: number; sourceGeometryIndex: number }
 const textureKey = (value: string) => value.trim().toLowerCase().replace(/\.(png|jpg|jpeg|bmp|dds)$/i, '')
 
+function decodeTxdBitmap(raster: Uint8Array, _rasterFormat: number, _width: number, _height: number) {
+  return raster
+}
 function geometryFromDff(geometry: NonNullable<DffData['geometryList']>['geometries'][number], sourceGeometryIndex: number): RenderGeometry[] {
   const result: RenderGeometry[] = []
   const positions = geometry.vertexInformation.flatMap(({ x, y, z }) => [x, y, z])
   const normals = geometry.normalInformation.flatMap(({ x, y, z }) => [x, y, z])
-  const uv = geometry.textureMappingInformation[0]?.flatMap(({ u, v }) => [u, 1 - v])
+  const uv = geometry.textureMappingInformation[0]?.flatMap(({ u, v }) => [u, v])
   const meshes = geometry.binMesh?.meshes ?? [{ indices: geometry.triangleInformation.flatMap((triangle) => [triangle.vector.x, triangle.vector.y, triangle.vector.z]), materialIndex: 0 }]
   if (!positions.length) return result
   meshes.forEach((mesh) => {
-    if (!mesh.indices.length) return
+    if (!mesh.indices.length || mesh.indices.some((index) => index < 0 || index >= geometry.vertexInformation.length)) return
     const buffer = new THREE.BufferGeometry()
     buffer.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
     if (normals.length === positions.length) buffer.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3))
@@ -26,6 +29,7 @@ function geometryFromDff(geometry: NonNullable<DffData['geometryList']>['geometr
     buffer.computeVertexNormals()
     buffer.computeBoundingSphere()
     const material = geometry.materialList.materialData[mesh.materialIndex]
+    if (!material) return
     const materialTexture = material?.texture?.textureName
     const color = material?.color
     const materialColor = color ? new THREE.Color(color.r / 255, color.g / 255, color.b / 255).getHexString() : undefined
@@ -52,11 +56,14 @@ export default function DffModel({ fallback, modelName, basePath = '/models', ma
         const loaded = new Map<string, THREE.Texture>()
         const parsed = new DffParser(Buffer.from(await dffResponse.arrayBuffer())).parse()
         if (txdResponse?.ok) {
-          const txd = new TxdParser(Buffer.from(await txdResponse.arrayBuffer())).parse()
+          const txdParser = new TxdParser(Buffer.from(await txdResponse.arrayBuffer()))
+          const txd = txdParser.parse()
           txd.textureDictionary.textureNatives.forEach((native) => {
           const source = native.mipmaps[0]
           if (!source?.length) return
-          const texture = new THREE.DataTexture(new Uint8Array(source), native.width, native.height, THREE.RGBAFormat)
+          const bitmap = decodeTxdBitmap(new Uint8Array(source), native.rasterFormat, native.width, native.height)
+          if (bitmap.length !== native.width * native.height * 4) return
+          const texture = new THREE.DataTexture(new Uint8Array(bitmap), native.width, native.height, THREE.RGBAFormat)
           texture.colorSpace = THREE.SRGBColorSpace
           texture.flipY = false
           texture.minFilter = THREE.LinearFilter

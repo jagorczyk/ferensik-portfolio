@@ -4,6 +4,8 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import DffModel from '../DffModel'
 
+const MODEL_ROTATION = Math.PI
+
 function FallbackObject() {
   return (
     <group>
@@ -39,10 +41,10 @@ function RotatingModel({
     if (group.current && !paused) group.current.rotation.z += delta * rotationSpeed
   })
   useEffect(() => {
-    if (group.current && resetSignal > 0) group.current.rotation.z = Math.PI / 2
+    if (group.current && resetSignal > 0) group.current.rotation.z = MODEL_ROTATION
   }, [resetSignal])
   return (
-    <group ref={group} rotation={[0, 0, Math.PI / 2]} scale={1.2}>
+    <group ref={group} rotation={[0, 0, MODEL_ROTATION]} scale={1.2}>
       <DffModel modelName={modelName} basePath={basePath} materialColor={materialColor} fallback={<FallbackObject />} />
     </group>
   )

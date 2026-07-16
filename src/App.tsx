@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { ContactProvider } from './context/ContactContext'
 import Home from './pages/Home'
 import ModelsPage from './pages/ModelsPage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import SkinsPage from './pages/SkinsPage'
 
 function AnimatedRoutes() {
@@ -13,6 +14,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/modele" element={<ModelsPage />} />
         <Route path="/skiny" element={<SkinsPage />} />
+        <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage />} />
       </Routes>
     </AnimatePresence>
   )
