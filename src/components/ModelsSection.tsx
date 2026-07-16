@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { MODELS } from '../data/models'
 import ModelRow from './ModelRow'
-import { DownArrowIcon } from './icons'
+import { LongArrowIcon } from './icons'
 
 export default function ModelsSection() {
-  const [expanded, setExpanded] = useState(false)
-  const featuredModels = MODELS.slice(0, 3)
-  const remainingModels = MODELS.slice(3)
+  const featuredIds = new Set(['domek', 'gurzad', 'lscarstore'])
+  const featuredModels = MODELS.filter((model) => featuredIds.has(model.id))
 
   return (
     <section className="models" id="modele">
@@ -20,28 +19,11 @@ export default function ModelsSection() {
         {featuredModels.map((model) => (
           <ModelRow key={model.id} model={model} />
         ))}
-        {remainingModels.length > 0 && (
-          <div id="additional-models" className={`additional-models${expanded ? ' is-expanded' : ''}`} aria-hidden={!expanded}>
-            <div className="additional-models-inner">
-              {remainingModels.map((model) => (
-                <ModelRow key={model.id} model={model} />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
-      {remainingModels.length > 0 && (
-        <button
-          type="button"
-          className="expand-models-button"
-          aria-expanded={expanded}
-          aria-controls="additional-models"
-          onClick={() => setExpanded((value) => !value)}
-        >
-          <span>{expanded ? 'Zwiń dodatkowe modele' : 'Pokaż pozostałe modele'}</span>
-          <DownArrowIcon expanded={expanded} />
-        </button>
-      )}
+      <Link className="see-all-link" to="/modele">
+        <span>Zobacz wszystkie modele</span>
+        <LongArrowIcon />
+      </Link>
     </section>
   )
 }
