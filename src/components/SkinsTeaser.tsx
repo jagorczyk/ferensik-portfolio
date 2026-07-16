@@ -21,7 +21,7 @@ function SpinningSkin({ modelName, position, offset }: { modelName: string; posi
     if (group.current) group.current.rotation.z += delta * 0.16
   })
   return (
-    <group ref={group} position={position} rotation={[0, 0, Math.PI / 2 + Math.PI / 4 + offset]} scale={1.05}>
+    <group ref={group} position={position} rotation={[0, 0, Math.PI + Math.PI / 4 + offset]} scale={1.05}>
       <DffModel modelName={modelName} basePath="/skins" materialColor="#b8b8b2" fallback={<FallbackSkin />} />
     </group>
   )
