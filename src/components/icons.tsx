@@ -39,3 +39,11 @@ export function LongArrowIcon() {
     </svg>
   )
 }
+
+export function DownArrowIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg className={`down-arrow${expanded ? ' is-expanded' : ''}`} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m5 9 7 7 7-7" />
+    </svg>
+  )
+}

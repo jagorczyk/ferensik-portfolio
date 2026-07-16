@@ -36,8 +36,8 @@ function SkinsStage() {
         <directionalLight position={[3, 4, 5]} intensity={1.15} color="#fff" />
         <directionalLight position={[-4, 1, 2]} intensity={0.35} color="#666" />
         <Suspense fallback={null}>
-          <SpinningSkin modelName="AzusaGibbous" position={[-0.82, 0, 0]} offset={0} />
-          <SpinningSkin modelName="tung" position={[0.82, -0.38, 0]} offset={Math.PI / 12} />
+          <SpinningSkin modelName="agent" position={[-0.82, 0, 0]} offset={0} />
+          <SpinningSkin modelName="randomGang" position={[0.82, -0.38, 0]} offset={Math.PI / 12} />
           <Environment preset="studio" />
           <ContactShadows position={[0, 0, -1.25]} opacity={0.82} scale={4.4} blur={2.2} />
         </Suspense>
